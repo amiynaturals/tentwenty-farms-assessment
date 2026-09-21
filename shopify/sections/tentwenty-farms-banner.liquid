@@ -1,0 +1,398 @@
+{{ 'tentwenty-farms-banner.css' | asset_url | stylesheet_tag }}
+{{ 'text-reveal.css' | asset_url | stylesheet_tag }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+{%- liquid
+  assign slide_blocks = section.blocks | where: 'type', 'slide'
+  assign valid_count = 0
+  assign first_next_desktop = blank
+  assign first_next_mobile = blank
+  assign second_next_desktop = blank
+  assign second_next_mobile = blank
+  assign slide1_desktop = blank
+  assign slide1_mobile = blank
+-%}
+
+{%- capture slides_json -%}
+[
+{%- assign first_item = true -%}
+{%- for block in slide_blocks -%}
+  {%- if block.settings.image != blank -%}
+    {%- assign valid_count = valid_count | plus: 1 -%}
+    {%- assign desk_url = block.settings.image | image_url: width: 2400 -%}
+    {%- if block.settings.image_mobile != blank -%}
+      {%- assign mob_url = block.settings.image_mobile | image_url: width: 1600 -%}
+    {%- else -%}
+      {%- assign mob_url = desk_url -%}
+    {%- endif -%}
+    {%- assign thumb_desk = block.settings.image | image_url: width: 400 -%}
+    {%- if block.settings.image_mobile != blank -%}
+      {%- assign thumb_mob = block.settings.image_mobile | image_url: width: 400 -%}
+    {%- else -%}
+      {%- assign thumb_mob = thumb_desk -%}
+    {%- endif -%}
+    {%- assign img_alt = block.settings.alt | default: block.settings.image.alt | default: section.settings.heading -%}
+    {%- assign visibility = block.settings.visibility | default: 'both' -%}
+    {%- unless first_item -%},{%- endunless -%}
+    {"src":{{ desk_url | json }},"srcMobile":{{ mob_url | json }},"thumb":{{ thumb_desk | json }},"thumbMobile":{{ thumb_mob | json }},"alt":{{ img_alt | json }},"visibility":{{ visibility | json }}}
+    {%- assign first_item = false -%}
+    {%- if valid_count == 1 -%}
+      {%- assign slide1_desktop = thumb_desk -%}
+      {%- assign slide1_mobile = thumb_mob -%}
+    {%- endif -%}
+    {%- if valid_count == 2 -%}
+      {%- assign first_next_desktop = thumb_desk -%}
+      {%- assign first_next_mobile = thumb_mob -%}
+    {%- endif -%}
+    {%- if valid_count == 3 -%}
+      {%- assign second_next_desktop = thumb_desk -%}
+      {%- assign second_next_mobile = thumb_mob -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+]
+{%- endcapture -%}
+
+{%- if first_next_desktop == blank -%}
+  {%- assign first_next_desktop = slide1_desktop -%}
+  {%- assign first_next_mobile = slide1_mobile -%}
+{%- endif -%}
+{%- if second_next_desktop == blank -%}
+  {%- assign second_next_desktop = first_next_desktop -%}
+  {%- assign second_next_mobile = first_next_mobile -%}
+{%- endif -%}
+
+{%- if valid_count == 0 -%}
+  <div class="tt-farms-banner__empty">
+    <p>Add at least one slide image in the theme editor to show the TenTwenty Farms banner.</p>
+  </div>
+{%- else -%}
+  <section
+    id="tt-farms-banner-{{ section.id }}"
+    class="tt-farms-banner"
+    data-tt-farms-banner
+    data-autoplay-ms="{{ section.settings.autoplay_ms }}"
+    data-wipe-ms="{{ section.settings.wipe_ms }}"
+    data-enable-zoom="{% if section.settings.enable_zoom %}true{% else %}false{% endif %}"
+    data-zoom-amount="{{ section.settings.zoom_amount }}"
+    data-mobile-breakpoint="{{ section.settings.mobile_breakpoint }}"
+    style="
+      --tt-next-size-mobile: {{ section.settings.next_size_mobile }}px;
+      --tt-next-size-desktop: {{ section.settings.next_size_desktop }}px;
+      --tt-next-gap: {{ section.settings.next_gap }}px;
+      --tt-stroke-width: {{ section.settings.stroke_width }}px;
+      --tt-banner-height: {{ section.settings.banner_height }}vh;
+    "
+    aria-roledescription="carousel"
+    aria-label="{{ section.settings.accessibility_label | escape }}"
+    tabindex="0"
+  >
+    <script type="application/json" data-tt-farms-slides>
+      {{ slides_json }}
+    </script>
+
+    <div class="tt-farms-banner__slides" data-slides-el id="tt-farms-slides-{{ section.id }}"></div>
+
+    <div class="tt-farms-banner__copy-wrap">
+      <div class="tt-farms-banner__copy" data-copy>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="tt-farms-banner__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="tt-farms-banner__title tt-farms-banner__title--desktop">{{ section.settings.heading | escape | newline_to_br }}</h2>
+        {%- endif -%}
+        {%- if section.settings.heading_mobile != blank -%}
+          <h2 class="tt-farms-banner__title tt-farms-banner__title--mobile">{{ section.settings.heading_mobile | escape | newline_to_br }}</h2>
+        {%- elsif section.settings.heading != blank -%}
+          <h2 class="tt-farms-banner__title tt-farms-banner__title--mobile">{{ section.settings.heading | escape | newline_to_br }}</h2>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="tt-farms-banner__controls">
+      <button
+        type="button"
+        class="tt-farms-banner__next"
+        data-next
+        aria-label="Next slide"
+        aria-controls="tt-farms-slides-{{ section.id }}"
+      >
+        <span class="tt-farms-banner__next-frame">
+          <span class="tt-farms-banner__next-thumbs" aria-hidden="true">
+            <img
+              class="tt-farms-banner__next-thumb is-shown"
+              data-next-thumb-a
+              src="{{ first_next_desktop }}"
+              data-src-desktop="{{ first_next_desktop }}"
+              data-src-mobile="{{ first_next_mobile }}"
+              alt=""
+              width="160"
+              height="160"
+              loading="lazy"
+              decoding="async"
+            >
+            <img
+              class="tt-farms-banner__next-thumb"
+              data-next-thumb-b
+              src="{{ second_next_desktop }}"
+              data-src-desktop="{{ second_next_desktop }}"
+              data-src-mobile="{{ second_next_mobile }}"
+              alt=""
+              width="160"
+              height="160"
+              loading="lazy"
+              decoding="async"
+            >
+          </span>
+          <span class="tt-farms-banner__next-label" aria-hidden="true">{{ section.settings.next_label | escape }}</span>
+          <svg class="tt-farms-banner__next-svg" viewBox="0 0 100 100" fill="none" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+            <path
+              class="tt-farms-banner__next-track"
+              d="M 3,3 L 97,3 L 97,97 L 3,97 L 3,3"
+              stroke="rgba(255,255,255,0.4)"
+              stroke-width="1"
+              fill="none"
+            ></path>
+            <path
+              class="tt-farms-banner__next-progress"
+              data-next-progress
+              d="M 3,3 L 97,3 L 97,97 L 3,97 L 3,3"
+              stroke="#fff"
+              stroke-width="{{ section.settings.stroke_width }}"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              fill="none"
+            ></path>
+          </svg>
+        </span>
+      </button>
+
+      {%- unless section.settings.hide_counter -%}
+        <div class="tt-farms-banner__counter" aria-live="polite" aria-atomic="true">
+          <span class="tt-farms-banner__sr-only" data-status>Slide 1 of {{ valid_count }}</span>
+          <span class="tt-farms-banner__counter-current" data-counter-window>
+            <span class="tt-farms-banner__counter-num" data-current>01</span>
+          </span>
+          <span class="tt-farms-banner__bar" aria-hidden="true">
+            <span class="tt-farms-banner__bar-fill" data-bar-fill style="width: 0%"></span>
+          </span>
+          <span class="tt-farms-banner__total" data-total>{{ valid_count | prepend: '00' | slice: -2, 2 }}</span>
+        </div>
+      {%- endunless -%}
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="{{ 'text-reveal.js' | asset_url }}" defer></script>
+  <script src="{{ 'tentwenty-farms-banner.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "TenTwenty Farms Banner",
+  "tag": "section",
+  "class": "section-tt-farms-banner",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Welcome To TenTwenty Farms"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading (desktop)",
+      "default": "From Our Farms To Your Hands"
+    },
+    {
+      "type": "textarea",
+      "id": "heading_mobile",
+      "label": "Heading (mobile)",
+      "info": "Optional. Falls back to desktop heading if empty."
+    },
+    {
+      "type": "text",
+      "id": "next_label",
+      "label": "Next button label",
+      "default": "Next"
+    },
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Accessibility label",
+      "default": "TenTwenty Farms banner"
+    },
+    {
+      "type": "header",
+      "content": "Playback"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_ms",
+      "min": 2000,
+      "max": 9000,
+      "step": 250,
+      "unit": "ms",
+      "label": "Slide playback duration",
+      "info": "How long each slide stays before advancing",
+      "default": 5500
+    },
+    {
+      "type": "range",
+      "id": "wipe_ms",
+      "min": 500,
+      "max": 4000,
+      "step": 250,
+      "unit": "ms",
+      "label": "Wipe transition duration",
+      "default": 2750
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "Enable synced zoom",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "zoom_amount",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "%",
+      "label": "Zoom amount",
+      "default": 7
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_counter",
+      "label": "Hide slide counter",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Next thumbnail"
+    },
+    {
+      "type": "range",
+      "id": "next_size_mobile",
+      "min": 64,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Thumbnail size (mobile)",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "next_size_desktop",
+      "min": 80,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "label": "Thumbnail size (desktop)",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "next_gap",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Gap between image and stroke",
+      "info": "Empty space between the thumbnail photo and the progress border",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "stroke_width",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Progress stroke thickness",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Banner height",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "mobile_breakpoint",
+      "min": 600,
+      "max": 990,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile breakpoint",
+      "info": "Below this width, mobile slide images are used",
+      "default": 770
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Desktop image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Mobile image",
+          "info": "Optional. Uses desktop image if empty."
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text"
+        },
+        {
+          "type": "select",
+          "id": "visibility",
+          "label": "Show on",
+          "options": [
+            { "value": "both", "label": "Desktop & mobile" },
+            { "value": "desktop", "label": "Desktop only" },
+            { "value": "mobile", "label": "Mobile only" }
+          ],
+          "default": "both"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TenTwenty Farms Banner",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

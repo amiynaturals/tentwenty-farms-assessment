@@ -1,0 +1,28 @@
+
+
+.tr-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.tr-inner {
+  display: inline-block;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.tr-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tr-inner {
+    transform: none !important;
+  }
+}

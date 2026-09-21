@@ -1,0 +1,182 @@
+
+
+.quality {
+  --q-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  padding: 2.5rem 0 5rem;
+  overflow: hidden;
+  color: #111;
+  background: #f5f5f5;
+}
+
+@media (min-width: 768px) {
+  .quality {
+    padding: 3rem 0 6.5rem;
+  }
+}
+
+.quality__stage {
+  position: relative;
+  width: min(100%, 68rem);
+  margin: 2.75rem auto 0;
+  height: clamp(20rem, 58vw, 32rem);
+  outline: none;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: default;
+  perspective: 1200px;
+}
+
+.quality__stage:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 6px;
+}
+
+.quality__track {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.quality__card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--q-card-w, 42%);
+  aspect-ratio: 3 / 4;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #ddd;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  cursor: default;
+  overflow: hidden;
+
+  transition: none;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.quality__card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.quality__card.is-side {
+  z-index: 1;
+}
+
+.quality__card.is-center {
+  z-index: 4;
+}
+
+.quality__drag-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  width: 4.25rem;
+  height: 4.25rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+
+  transition: opacity 0.22s ease;
+  mix-blend-mode: difference;
+}
+
+.quality__stage.is-hover .quality__drag-cursor,
+.quality__stage.is-dragging .quality__drag-cursor {
+  opacity: 1;
+}
+
+.quality__drag-cursor-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: conic-gradient(
+    from -90deg,
+    #fff 0deg,
+    #fff calc(var(--p, 0) * 360deg),
+    rgba(255, 255, 255, 0.28) calc(var(--p, 0) * 360deg),
+    rgba(255, 255, 255, 0.28) 360deg
+  );
+}
+
+.quality__drag-cursor-keys {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  pointer-events: none;
+}
+
+.quality__drag-cursor-key {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1;
+  color: #000;
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
+}
+
+.quality__drag-cursor.is-prev .quality__drag-cursor-key[data-key-prev],
+.quality__drag-cursor.is-next .quality__drag-cursor-key[data-key-next] {
+  opacity: 1;
+}
+
+.tr-enabled .quality__title:not(:has(.tr-inner)),
+.tr-enabled .quality__location:not(:has(.tr-inner)),
+.tr-enabled [data-intro-title]:not(:has(.tr-inner)),
+.tr-enabled [data-intro-body]:not(:has(.tr-inner)) {
+  opacity: 0;
+}
+
+.quality__copy {
+  margin-top: 2rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quality__drag-cursor {
+    transition: none !important;
+  }
+}
+
+@media (hover: none) {
+  .quality__stage,
+  .quality__card {
+    cursor: grab;
+  }
+
+  .quality__stage.is-dragging {
+    cursor: grabbing;
+  }
+
+  .quality__drag-cursor {
+    display: none;
+  }
+}

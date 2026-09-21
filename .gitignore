@@ -1,0 +1,16 @@
+.env
+shopify/_*
+shopify/**/_*
+**/node_modules/
+.DS_Store
+Thumbs.db
+*.log
+shopify/quality-uploads.json
+shopify/_put_index.json
+shopify/_products.json
+shopify/_collections.json
+shopify/_collection_tpl.json
+shopify/_index.json
+shopify/_header.json
+shopify/_collection_list_schema.txt
+shopify/catalog-summary.json

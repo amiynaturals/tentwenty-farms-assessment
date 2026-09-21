@@ -1,0 +1,235 @@
+
+
+.banner {
+  --next-size: 4.75rem;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --slide-duration: 5.5s;
+  --wipe-duration: 2.75s;
+  --thumb-fade: 280ms;
+  touch-action: pan-y;
+}
+
+@media (min-width: 768px) {
+  .banner {
+    --next-size: 6.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .banner {
+    --next-size: 7.5rem;
+  }
+}
+
+.banner__controls {
+  padding-bottom: max(2rem, calc(1.25rem + env(safe-area-inset-bottom, 0px)));
+}
+
+@media (min-width: 768px) {
+  .banner__controls {
+    padding-bottom: max(3rem, calc(2rem + env(safe-area-inset-bottom, 0px)));
+  }
+}
+
+.banner__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.banner__slide.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.banner__slide.is-entering {
+  opacity: 1;
+  z-index: 2;
+  animation: hero-slide-reveal var(--wipe-duration) var(--ease-out-expo) both;
+}
+
+.banner__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: scale(1);
+  transform-origin: center center;
+  will-change: transform;
+
+}
+
+.banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.12) 42%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+@keyframes hero-slide-reveal {
+  from {
+    clip-path: inset(50% 0 50% 0);
+  }
+  to {
+    clip-path: inset(0% 0 0% 0);
+  }
+}
+
+.tr-enabled .banner__eyebrow:not(:has(.tr-inner)),
+.tr-enabled .banner__title:not(:has(.tr-inner)) {
+  opacity: 0;
+}
+
+.banner__next-frame {
+  width: var(--next-size);
+  height: var(--next-size);
+  position: relative;
+  overflow: visible;
+  --next-gap: 10px;
+}
+
+.banner__next-thumbs {
+  position: absolute;
+  inset: var(--next-gap);
+  display: block;
+  overflow: hidden;
+}
+
+.banner__next-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--thumb-fade) ease;
+}
+
+.banner__next-thumb.is-shown {
+  opacity: 1;
+}
+
+.banner--reduce-motion .banner__next-thumb {
+  transition: none;
+}
+
+.banner__next-progress {
+  transition: none;
+}
+
+.banner__counter-num {
+  display: block;
+  line-height: 1.25;
+}
+
+.banner__counter-num.is-exit {
+  position: absolute;
+  inset: 0;
+  animation: counter-exit 1.6s var(--ease-out-expo) forwards;
+}
+
+.banner__counter-num.is-enter {
+  animation: counter-enter 1.6s var(--ease-out-expo) both;
+}
+
+@keyframes counter-exit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+}
+
+@keyframes counter-enter {
+  from {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.banner__bar-fill {
+  transform-origin: left center;
+  will-change: width;
+}
+
+.banner__bar-fill.is-resetting {
+  transition: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner {
+    --wipe-duration: 0.01ms;
+    --thumb-fade: 0ms;
+  }
+
+  .banner__slide.is-entering {
+    animation: none !important;
+    clip-path: none !important;
+  }
+
+  .banner__slide.is-active img,
+  .banner__slide.is-entering img {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .hero-fade-up,
+  .banner__copy.is-animating .banner__eyebrow,
+  .banner__copy.is-animating .banner__title,
+  .banner__counter-num.is-exit,
+  .banner__counter-num.is-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+.banner--reduce-motion .banner__slide.is-entering {
+  animation: none !important;
+  clip-path: none !important;
+}
+
+.banner--reduce-motion .banner__slide img {
+  animation: none !important;
+  transform: none !important;
+}
+
+.banner--reduce-motion .hero-fade-up,
+.banner--reduce-motion .banner__copy.is-animating .banner__eyebrow,
+.banner--reduce-motion .banner__copy.is-animating .banner__title,
+.banner--reduce-motion .banner__counter-num.is-exit,
+.banner--reduce-motion .banner__counter-num.is-enter {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}

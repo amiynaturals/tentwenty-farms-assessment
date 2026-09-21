@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TenTwenty Farms — Quality Products</title>
+    <meta
+      name="description"
+      content="TenTwenty Farms quality products coverflow slider."
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: [
+                "Work Sans",
+                "ui-sans-serif",
+                "system-ui",
+                "sans-serif",
+              ],
+            },
+            colors: {
+              cream: "#F5F5F5",
+              ink: "#111111",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/quality-slider.css" />
+    <link rel="stylesheet" href="./css/text-reveal.css" />
+  </head>
+  <body class="bg-cream font-sans antialiased text-ink">
+    <header class="px-5 py-4 md:px-10">
+      <a
+        href="./index.html"
+        class="text-sm font-medium text-ink/60 underline-offset-4 hover:text-ink hover:underline"
+      >
+        ← Banner slider
+      </a>
+    </header>
+
+    <section
+      class="quality"
+      data-quality
+      aria-roledescription="carousel"
+      aria-label="Quality products gallery"
+    >
+      <div class="mx-auto max-w-3xl px-5 text-center md:px-8">
+        <h1
+          class="text-3xl font-semibold tracking-tight md:text-4xl lg:text-[2.75rem]"
+          data-intro-title
+        >
+          Quality Products
+        </h1>
+        <p
+          class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-ink/55 md:text-base"
+          data-intro-body
+        >
+          From our fields to your table — seasonal harvests grown with care,
+          selected for flavour, freshness, and the farms behind them.
+        </p>
+      </div>
+
+      <div
+        class="quality__stage"
+        data-stage
+        tabindex="0"
+        role="group"
+        aria-label="Product gallery. Drag, click the left or right arrows in the ring, or use arrow keys."
+      >
+        <div class="quality__track" data-track></div>
+
+        <div class="quality__drag-cursor" data-drag-cursor aria-hidden="true">
+          <span class="quality__drag-cursor-ring" data-drag-ring></span>
+          <span class="quality__drag-cursor-keys">
+            <span class="quality__drag-cursor-key" data-key-prev>&lt;</span>
+            <span class="quality__drag-cursor-key" data-key-next>&gt;</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="quality__copy mx-auto max-w-lg px-5 text-center" data-copy>
+        <h2 class="quality__title text-xl font-semibold md:text-2xl" data-title>
+          Heritage Greens
+        </h2>
+        <p class="quality__location mt-2 text-sm text-ink/45 md:text-base" data-location>
+          Dubai, United Arab Emirates
+        </p>
+        <p class="sr-only" data-status aria-live="polite">Slide 1 of 5</p>
+      </div>
+    </section>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"
+      defer
+    ></script>
+    <script src="./js/text-reveal.js" defer></script>
+    <script src="./js/quality-slider.js" defer></script>
+  </body>
+</html>
